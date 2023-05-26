@@ -17,6 +17,7 @@ public class CasherFor {
                         break;
                     } else if (bucket[first] > 100) {
                         bucket[first] = 0;
+                        System.out.println("100 초과 0원 적용");
                     }
                     
                     sum = sum + bucket[first];
