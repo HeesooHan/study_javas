@@ -3,6 +3,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+import surveys.Statistics;
+
 /**
 surveyapp
 */
@@ -22,18 +24,51 @@ public class SurveysApp {
             // - query Edit
             Statement statement = connection.createStatement();
 
-            System.out.println("---통계---");
-            // -- 총 설문자 : 3명
-            String queryA = "SELECT COUNT(*) CNT\r\n" + //
-                    "FROM (\r\n" + //
-                    "\tSELECT RESPONDENTS_ID, COUNT(*) CNT\r\n" + //
-                    "\tFROM statistics\r\n" + //
-                    "\tgroup by RESPONDENTS_ID\r\n" + //
-                    "    ) AS T_STATIC\r\n";
-            ResultSet resultSet = statement.executeQuery(queryA);
+            System.out.println("--- 설문자 가능 명단 ---");
+            // -- - 설문자 가능 명단(가입 완료)
+            // -- 1. 홍길동, 2.장길산, 3.신사임당, ...
+            String queryB = "SELECT *\n" + //
+                    "FROM respondents";
+            ResultSet resultSet = statement.executeQuery(queryB);
+            int number = 1;
             while (resultSet.next()) {
-                System.out.println("-- 총 설문자 : "+ resultSet.getString("CNT"));
+                System.out.print(number +"."+resultSet.getString("respondents")+".");
+                number = number + 1;
             }
+            System.out.println();
+
+            // -- 설문 시작
+            // -------- 참조 : poll contents example -------------
+            // -- 1. 교수는 수업 전 강의 목표를 명확히 제시하였습니까?
+            // -- 2. 강의의 내용은 체계적이고 성의있게 구성되었는가?
+            // -- 문항
+            System.out.println("-- 설문 시작");
+            queryB = "SELECT *\n" + //
+                    "FROM questions";
+            resultSet = statement.executeQuery(queryB);
+            number = 1;
+            Statement statement_second = connection.createStatement(); 
+            while (resultSet.next()) {
+                System.out.println(number +"."+resultSet.getString("questions")+".");
+                queryB = "SELECT T_CHO.CHOICE_ID, T_CHO.CHOICE\n" + //
+                        "FROM question_choice AS T_QUES\n" + //
+                        "\tINNER JOIN choice AS T_CHO\n" + //
+                        "    ON T_QUES.CHOICE_ID = T_CHO.CHOICE_ID\n" + //
+                        "\tAND QUESTIONS_ID = 'Q1'";
+            ResultSet resultSet_second = statement_second.executeQuery(queryB);
+            int number_second = 1;
+            while (resultSet_second.next()) {
+                System.out.print(number_second +"."+resultSet_second.getString("choice")+".");
+                number_second = number_second + 1;
+            }
+                System.out.println();
+                number_second = number_second + 1;
+            }
+            System.out.println();
+
+            // 통계 - 총 설문자 표시
+            Statistics statististics = new Statistics();
+            statististics.getRespondents(statement);
         } catch (Exception e) {
             // TODO: handle exception
         }
