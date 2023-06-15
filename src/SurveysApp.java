@@ -7,7 +7,7 @@ import java.sql.Statement;
 surveyapp
 */
 
-public class SurveyApp {
+public class SurveysApp {
     public static void main(String[] args) {
         try {
             // - MySQL workbench 실행 : JDBC
