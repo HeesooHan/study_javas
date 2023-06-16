@@ -15,4 +15,8 @@ public class Scanners {
 
         // return 0 ;
     }
+
+    public String nextLine() {
+        return null;
+    }
 }
